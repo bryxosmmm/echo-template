@@ -20,6 +20,8 @@ func RegisterRouter(e *echo.Echo, db *pgxpool.Pool, log *logger.Logger) {
 
 	api := e.Group("/api/v1")
 
+	api.GET("/ping", handlers.Ping)
+
 	client := api.Group("/clients")
 	authClient := client.Group("/auth")
 	{
