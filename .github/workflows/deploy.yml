@@ -12,7 +12,7 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Run server
-        run: docker-compose up --build 
+      - name: Build and run server
+        run: docker-compose up --build -d
 
 

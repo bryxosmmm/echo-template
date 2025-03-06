@@ -1,0 +1,105 @@
+definitions:
+  models.ClientSignIn:
+    properties:
+      email:
+        type: string
+      password:
+        maxLength: 100
+        minLength: 8
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  models.ClientSignUp:
+    properties:
+      email:
+        type: string
+      name:
+        minLength: 3
+        type: string
+      password:
+        maxLength: 100
+        minLength: 8
+        type: string
+    required:
+    - email
+    - name
+    - password
+    type: object
+  models.SignSuccess:
+    properties:
+      id:
+        type: string
+      token:
+        type: string
+    type: object
+  utils.Err:
+    properties:
+      message:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /clients/auth/sign-up:
+    post:
+      consumes:
+      - application/json
+      description: create client with given data
+      parameters:
+      - description: Credentials to use
+        in: body
+        name: client
+        required: true
+        schema:
+          $ref: '#/definitions/models.ClientSignUp'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.SignSuccess'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Err'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.Err'
+      summary: Create client
+      tags:
+      - Clients
+  /partners/auth/sign-in:
+    post:
+      consumes:
+      - application/json
+      description: sign-in in partners with given data
+      parameters:
+      - description: Credentials to use
+        in: body
+        name: partner
+        required: true
+        schema:
+          $ref: '#/definitions/models.ClientSignIn'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.SignSuccess'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Err'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.Err'
+      summary: Sign-in for partners
+      tags:
+      - Partners
+swagger: "2.0"

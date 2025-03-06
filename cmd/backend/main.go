@@ -1,6 +1,7 @@
 package main
 
 import (
+	_ "echo-template/docs"
 	"echo-template/internal/application"
 	"echo-template/internal/infrastructure"
 )

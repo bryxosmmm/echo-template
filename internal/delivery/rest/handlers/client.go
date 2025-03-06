@@ -26,6 +26,18 @@ func NewAuthHandler(clientService *usecase.ClientService) *AuthHandler {
 	}
 }
 
+// ClientAuth godoc
+//
+//	@Summary		Create client
+//	@Description	create client with given data
+//	@Tags			Clients
+//	@Accept			json
+//	@Produce		json
+//	@Param			client	body		models.ClientSignUp	true	"Credentials to use"
+//	@Success		201		{object}	models.SignSuccess
+//	@Failure		400 {object} utils.Err
+//	@Failure		500 {object} utils.Err
+//	@Router			/clients/auth/sign-up [post]
 func (h *AuthHandler) SignUpClient(c echo.Context) error {
 	var client models.ClientSignUp
 	if err := c.Bind(&client); err != nil {
@@ -43,6 +55,18 @@ func (h *AuthHandler) SignUpClient(c echo.Context) error {
 	return c.JSON(http.StatusOK, sign)
 }
 
+// PartnerAuth godoc
+//
+//	@Summary		Sign-in for partners
+//	@Description	sign-in in partners with given data
+//	@Tags			Partners
+//	@Accept			json
+//	@Produce		json
+//	@Param			partner	body		models.ClientSignIn	true	"Credentials to use"
+//	@Success		200		{object}	models.SignSuccess
+//	@Failure		400		{object}	utils.Err
+//	@Failure		500		{object}	utils.Err
+//	@Router			/partners/auth/sign-in [post]
 func (h *AuthHandler) SignInClient(c echo.Context) error {
 	var client models.ClientSignIn
 	if err := c.Bind(&client); err != nil {

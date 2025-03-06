@@ -7,6 +7,7 @@ import (
 
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/labstack/echo/v4"
+	swag "github.com/swaggo/echo-swagger"
 
 	usecase "echo-template/internal/use_case"
 )
@@ -21,6 +22,8 @@ func RegisterRouter(e *echo.Echo, db *pgxpool.Pool, log *logger.Logger) {
 	api := e.Group("/api/v1")
 
 	api.GET("/ping", handlers.Ping)
+
+	api.GET("/swagger/*", swag.WrapHandler)
 
 	client := api.Group("/clients")
 	authClient := client.Group("/auth")
