@@ -13,7 +13,7 @@ services:
       - DB_NAME=db
     depends_on:
       migrations:
-        condition: serivce_completed_successfully
+        condition: service_completed_successfully
 
   postgres:
     image: postgres:16.6
