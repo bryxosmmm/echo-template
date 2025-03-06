@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  run-docker-compose:
+  deploy:
     runs-on: self-hosted
     steps:
       - name: Checkout Code
