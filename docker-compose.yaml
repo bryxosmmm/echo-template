@@ -12,8 +12,9 @@ services:
       - DB_PORT=5432 
       - DB_NAME=db
     depends_on:
-      postgres:
-        condition: service_healthy
+      migrations:
+        condition: serivce_completed_successfully
+
   postgres:
     image: postgres:16.6
     environment:
@@ -30,16 +31,17 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./init.sql:/init.sql
-  # migrations:
-  #   image: ghcr.io/kukymbr/goose-docker:3.24.1
-  #   environment:
-  #     - GOOSE_DRIVER=postgres
-  #     - GOOSE_DBSTRING=host=postgres user=backenduser password=superStrongPassword dbname=db sslmode=disable
-  #   volumes:
-  #     - ./migrations:/migrations/
-  #   depends_on:
-  #     postgres:
-  #       condition: service_healthy
+
+  migrations:
+    image: ghcr.io/kukymbr/goose-docker:3.24.1
+    environment:
+      - GOOSE_DRIVER=postgres
+      - GOOSE_DBSTRING=host=postgres user=backenduser password=superStrongPassword dbname=db sslmode=disable
+    volumes:
+      - ./migrations:/migrations/
+    depends_on:
+      postgres:
+        condition: service_healthy
 
 volumes:
   postgres_data:
