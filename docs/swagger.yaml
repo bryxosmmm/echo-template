@@ -1,3 +1,4 @@
+basePath: /api/v1
 definitions:
   models.ClientSignIn:
     properties:
@@ -41,6 +42,9 @@ definitions:
     type: object
 info:
   contact: {}
+  description: This is a sample server celler server.
+  title: Swagger Example API
+  version: "1.0"
 paths:
   /clients/auth/sign-up:
     post:
