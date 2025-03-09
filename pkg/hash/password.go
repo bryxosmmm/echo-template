@@ -3,11 +3,12 @@ package hash
 import (
 	"errors"
 
-	"golang.org/x/crypto/bcrypt"
+	"github.com/matthewhartstonge/argon2"
 )
 
 func GenerateHash(password string) (string, error) {
-	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	config := argon2.DefaultConfig()
+	hash, err := config.HashEncoded([]byte(password))
 	if err != nil {
 		return "", err
 	}
@@ -15,9 +16,13 @@ func GenerateHash(password string) (string, error) {
 }
 
 func ComparePassword(password, hash string) error {
-	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
+	ok, err := argon2.VerifyEncoded([]byte(password), []byte(hash))
 	if err != nil {
-		return errors.New("password does not match")
+		return err
+	}
+
+	if !ok {
+		return errors.New("passwords do not match")
 	}
 
 	return nil

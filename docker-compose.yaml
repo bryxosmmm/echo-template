@@ -9,11 +9,15 @@ services:
       - DB_USER=backenduser
       - DB_PASSWORD=superStrongPassword
       - DB_HOST=postgres
+      - JAEGER_HOST=jaeger      
+      - JAEGER_PORT=6831
       - DB_PORT=5432 
       - DB_NAME=db
     depends_on:
       migrations:
         condition: service_completed_successfully
+      jaeger:
+        condition: service_started
 
   postgres:
     image: postgres:16.6
@@ -30,7 +34,7 @@ services:
       retries: 5
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./init.sql:/init.sql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
 
   migrations:
     image: ghcr.io/kukymbr/goose-docker:3.24.1
@@ -42,6 +46,12 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    ports:
+      - "6831:6831/udp"
+      - "16686:16686"
 
 volumes:
   postgres_data:

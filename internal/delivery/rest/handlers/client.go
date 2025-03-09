@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"echo-template/internal/infrastructure/repository"
 	"echo-template/internal/models"
 	"echo-template/internal/utils"
 	"errors"
@@ -52,21 +51,21 @@ func (h *AuthHandler) SignUpClient(c echo.Context) error {
 	if errors.Is(err, &pgconn.PgError{Code: "23505"}) {
 		return c.JSON(http.StatusConflict, utils.Err{Message: err.Error()})
 	}
-	return c.JSON(http.StatusOK, sign)
+	return c.JSON(http.StatusCreated, sign)
 }
 
 // PartnerAuth godoc
 //
 //	@Summary		Sign-in for partners
 //	@Description	sign-in in partners with given data
-//	@Tags			Partners
+//	@Tags			Clients
 //	@Accept			json
 //	@Produce		json
 //	@Param			partner	body		models.ClientSignIn	true	"Credentials to use"
 //	@Success		200		{object}	models.SignSuccess
 //	@Failure		400		{object}	utils.Err
 //	@Failure		500		{object}	utils.Err
-//	@Router			/partners/auth/sign-in [post]
+//	@Router			/clients/auth/sign-in [post]
 func (h *AuthHandler) SignInClient(c echo.Context) error {
 	var client models.ClientSignIn
 	if err := c.Bind(&client); err != nil {
@@ -76,11 +75,8 @@ func (h *AuthHandler) SignInClient(c echo.Context) error {
 		return c.JSON(utils.BadRequestError())
 	}
 	sign, err := h.clientService.SignInClient(c.Request().Context(), &client)
-	if errors.Is(err, repository.ErrClientNotFound) {
-		return c.JSON(http.StatusUnauthorized, err.Error())
-	}
 	if err != nil {
-		return c.JSON(http.StatusUnauthorized, err.Error())
+		return c.JSON(http.StatusUnauthorized, utils.Err{Message: err.Error()})
 	}
 	return c.JSON(http.StatusOK, sign)
 }

@@ -5,9 +5,11 @@ import (
 	"echo-template/internal/infrastructure"
 	"echo-template/internal/infrastructure/database"
 	"echo-template/internal/infrastructure/logger"
+	"errors"
 	"net/http"
 
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/labstack/echo-contrib/jaegertracing"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 
@@ -17,7 +19,7 @@ import (
 type Application struct {
 	e       *echo.Echo
 	Address string
-	Db      *pgxpool.Pool
+	DB      *pgxpool.Pool
 	Logger  *logger.Logger
 }
 
@@ -36,17 +38,21 @@ func NewApplication(config *infrastructure.Config) *Application {
 	return &Application{
 		e:       e,
 		Address: config.Server.Address,
-		Db:      db,
+		DB:      db,
 		Logger:  l, // Добавляем логгер
 	}
 }
 
 func (a *Application) RunServer() error {
 	e := initServer(a)
+
+	c := jaegertracing.New(e, nil)
+	defer c.Close()
+
 	a.Logger.Info("Starting server on " + a.Address)
 
 	if err := e.Start(a.Address); err != nil {
-		if err != http.ErrServerClosed {
+		if !errors.Is(err, http.ErrServerClosed) {
 			a.Logger.Errorf("Failed to start server: %s", err.Error())
 		}
 	}
@@ -58,8 +64,7 @@ func initServer(a *Application) *echo.Echo {
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 
-	// Теперь логгер передаётся корректно
-	router.RegisterRouter(e, a.Db, a.Logger)
+	router.RegisterRouter(e, a.DB, a.Logger)
 
 	return e
 }

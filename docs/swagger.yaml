@@ -17,6 +17,7 @@ definitions:
       email:
         type: string
       name:
+        maxLength: 100
         minLength: 3
         type: string
       password:
@@ -46,6 +47,36 @@ info:
   title: Swagger Example API
   version: "1.0"
 paths:
+  /clients/auth/sign-in:
+    post:
+      consumes:
+      - application/json
+      description: sign-in in partners with given data
+      parameters:
+      - description: Credentials to use
+        in: body
+        name: partner
+        required: true
+        schema:
+          $ref: '#/definitions/models.ClientSignIn'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.SignSuccess'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Err'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.Err'
+      summary: Sign-in for partners
+      tags:
+      - Clients
   /clients/auth/sign-up:
     post:
       consumes:
@@ -76,34 +107,4 @@ paths:
       summary: Create client
       tags:
       - Clients
-  /partners/auth/sign-in:
-    post:
-      consumes:
-      - application/json
-      description: sign-in in partners with given data
-      parameters:
-      - description: Credentials to use
-        in: body
-        name: partner
-        required: true
-        schema:
-          $ref: '#/definitions/models.ClientSignIn'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.SignSuccess'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/utils.Err'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/utils.Err'
-      summary: Sign-in for partners
-      tags:
-      - Partners
 swagger: "2.0"
